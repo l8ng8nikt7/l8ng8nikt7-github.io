@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link href='https://fonts.googleapis.com/css?family=Londrina+Shadow' rel='stylesheet' type='text/css'>
+<style>
+body {
+  font-family: helvetica, sans-serif;
+  margin: 0 auto;
+  max-width: 600px;
+  background: #0000FF;
+}
+div {
+  height: 200px;
+  background-size: cover;
+  position: relative;
+  margin: 40px 0 0 0;
+  border-radius: 12px;
+}
+h1 {
+  font-family: 'Londrina Shadow', cursive;
+  text-align: center;
+  font-size: 75px;
+  color: #aaaaaa;
+  margin: 60px 0 0 0;
+}
+h2 {
+  text-align: center;
+  color: #bbbbbb;
+  margin: 0px 0 70px 0;
+}
+p {
+  color: rgba(255,255,255,1);
+  background: blue;
+  background: linear-gradient(bottom, rgba(0,0,0,1), rgba(0,0,0,.4));
+  background: -webkit-linear-gradient(bottom, rgba(0,0,0,1), rgba(0,0,0,.4));
+  background: -moz-linear-gradient(bottom, rgba(0,0,0,1), rgba(0,0,0,.4));
+  padding: 10px;
+  line-height: 28px;
+  text-align: justify;
+  position: absolute;
+  bottom: 0;
+  margin: 0;
+  height: 30px;
+  transition: height .5s;
+  -webkit-transition: height .5s;
+  -moz-transition: height .5s;
+}
+input {
+	font-size: 22px;
+}
+
+
+small {
+  opacity: 0;
+}
+
+.show-description p {
+  height: 150px;
+}
+
+.show-description small {
+  opacity: 1;
+}
+
+.first{
+  background-image: url("https://i.ytimg.com/vi/hWjUFpLVzAE/maxresdefault.jpg");
+}
+.second{
+  background-image: url("https://www.kroger.com/product/images/large/front/0003100080940");
+}
+.dessert{
+  background-image: url("https://target.scene7.com/is/image/Target/GUEST_d591e3c5-4517-4279-969e-164aef8ac376?wid=488&hei=488&fmt=pjpeg");
+}
+.price {
+  float: right;
+}
+@media (max-width: 500px) {
+  h1 {
+    font-size: 50px;
+    margin-top: 20px;
+    line-height: 40px;
+  }
+  h2 {
+    font-size: 20px;
+    margin: 20px 0 30px 0;
+  }
+  div {
+    margin: 20px 12px 0 12px;
+  }
+  p {
+    font-size: 20px;
+    line-height: 24px;
+  }
+  small {
+    font-size: 16px;
+  }
+}
+
+</style>
+
+</head>
+<body>
+<h1>john's restaurant</h1>
+<h2>a New York City water</h2>
+
+<div class="first">
+	 <input class="quantities" type="number" min="0" style="width: 50px"> 
+  <p>water<span class="price">$300,000</span><br />
+  <small> just water </small></p>
+</div>
+
+
+
+ <div class="second">
+	  <input class="quantities" type="number" min="0" style="width: 50px">
+  <p> John Mega Meal <span class="price">$29</span><br />
+  <small>bigger food</small></p> 
+
+</div> 
+
+
+
+<div class="dessert">
+	 <input class="quantities" type="number" min="0" style="width: 50px"> 
+  <p>mac and cheese   <span class="price">$7</span><br />
+  <small>chess.</small></p>
+ </div>
+
+
+<br>
+
+ <input id="Name" placeholder="your name ">
+  <input id="Email" placeholder="email ">
+  <input id="submit" type="submit">
+  
+
+
+
+<script>
+  $('div').on('click', function() {
+      $(this).toggleClass('show-description');
+  });
+</script>
+  
+ 
+
+
+
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
+  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-database.js";
+  
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyCR-os4NJS038P1-kmLkUreNs-GuM1o6Ds",
+    authDomain: "sv-ebr.firebaseapp.com",
+    databaseURL: "https://sv-ebr-default-rtdb.firebaseio.com",
+    projectId: "sv-ebr",
+    storageBucket: "sv-ebr.appspot.com",
+    messagingSenderId: "1077404847244",
+    appId: "1:1077404847244:web:4fafa717ab56d4e9e1bfa9",
+    measurementId: "G-BL4N5N7LTM"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+   const db = getDatabase(app); 
+const Name = document.querySelector("#Name") 
+const Email = document.querySelector("#Email")
+   const quantities = document.querySelectorAll(".quantities") 
+const itemsList = ["water", "John Mega Meal", "mac and cheese"]
+
+   const prices = document.querySelectorAll(".price")
+   
+   
+document.querySelector('#submit').addEventListener('click', Submit)
+
+  
+  function Submit() {
+  	const timestamp = buildTimestamp()
+	  let total = 0
+	  let cart = { }
+	  for  (let i=0; i<quantities.length; i=i+1) {
+	  	if (quantities[i].value != "0" && quantities[i].value != "") {	
+			  let price = prices[i].innerHTML.replace('$', '')
+			price = price.replace(',', '')
+			  total = total + quantities[i].value * price 
+	  		cart[itemsList[i]] = parseInt(quantities[i].value) 
+	  	}
+	  	quantities[i].value = ""
+	  }
+	  
+  	  set(ref(db, timestamp), {
+  		  Name: Name.value,
+  	      email: Email.value,
+		  cart: cart,
+		  totalPrice: total,
+		  paid: "not yet",
+  	  });
+
+  	  Name.value = ""
+  	  Email.value = ""
+  	}
+
+	
+  
+  
+	function buildTimestamp() {
+		  const now = new Date();
+		  let timestamp = now.getFullYear().toString() + "/";
+		  //const month = now.toLocaleString('default', { month: 'long' });
+
+		  let month = now.getMonth()+1   //add 1 because Javascript uses 0 for January
+		  month = month.toString()
+		  month = addLeadingZero(month)
+		  timestamp += month + "/"; 
+
+		  let date = now.getDate().toString()
+		  date = addLeadingZero(date)
+		  timestamp += date + "/";
+
+		  let hours = now.getHours().toString()
+		  hours = addLeadingZero(hours)
+		  timestamp += hours + ":";
+
+		  let minutes = now.getMinutes().toString()
+		  minutes = addLeadingZero(minutes)
+		  timestamp += minutes + ":";
+
+		  let seconds = now.getSeconds().toString()
+		  seconds = addLeadingZero(seconds)
+		  timestamp += seconds;
+  
+		  return timestamp
+		}
+	
+		function addLeadingZero(units) {
+			if (units.length < 2) {
+				units = "0" + units
+			}
+			return units
+		}
+
+  
+
+</script>
+                                                       
+													   
+													   
+
+
+
+</body>
+
+
+  
